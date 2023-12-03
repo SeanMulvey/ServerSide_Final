@@ -93,12 +93,12 @@ namespace ServerSide_GameRater.Client.Services.DataService
 
         public async Task GetUsers()
         {
-            var result = await _http.GetFromJsonAsync<List<User>>($"/api/data/users");
+            var result = await _http.GetFromJsonAsync<List<User>>("/api/data/users");
             if (result != null)
             {
                 Users = result;
             }
-            throw new Exception("User Not Found");
+
         }
     }
 }

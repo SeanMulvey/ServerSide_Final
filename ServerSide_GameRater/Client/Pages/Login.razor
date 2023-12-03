@@ -8,60 +8,63 @@
 {
     <PageTitle>Login In</PageTitle>
     <h1>Log In</h1>
-    <EditForm Model="user" OnValidSubmit="SubmitLogin">
+    <EditForm Model="user" OnValidSubmit="Submit">
         <label>Username</label>
-        <InputText @bind-Value="user.username" />
+        <InputText @bind-Value="username" />
         <br />
         <br />
         <label>Password</label>
-        <InputText @bind-Value="user.password" />
+        <InputText @bind-Value="pass" />
         <br />
 
-        <button type="submit" class="btn btn-primary" @onclick ="SubmitLogin">Login</button>
+        <button type="submit" class="btn btn-primary" @onclick ="Submit">Login</button>
     </EditForm>
     <br />
     <button class="btn btn-primary" @onclick="SubmitRegister">Register</button>
-    <p>@AppState.userID</p>
     <p>@status</p>
    
 
 }
 else
 {
-    <h1>Signed in as, @DataService.GetSingleUser(AppState.userID).Result.username</h1>
+    <h1>Signed In Successfully</h1>
     <button class="btn btn-primary" @onclick="SubmitLogout">Logout</button>
 }
 
     
 
 @code {
-    string status;
     User user = new User();
+    string status;
+    string username;
+    string pass;
+    string currUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataService.GetUsers();
+    }
     void SubmitRegister()
     {
         NavigationManager.NavigateTo("/register");
     }
-    void SubmitLogin()
+    async Task Submit()
     {
-        User? check = DataService.Users.Where(u => u.username == user.username).FirstOrDefault();
-        DataService.GetUsers();
-        if (check == null)
+
+        var nameCheck = DataService.Users.Where(u => u.username == username).Select(u => u.userID).FirstOrDefault();
+        var passCheck = DataService.Users.Where(u => u.password == pass).Select(u => u.userID).FirstOrDefault();
+        if(nameCheck == passCheck)
         {
-            status = "No account with that combination of of username/password";
+            AppState.userID = nameCheck;
+            
         }
         else
         {
-            if (check.password == user.password)
-            {
-                AppState.userID = check.userID;
-                status = "Login Successful";
-            }
-            else
-            {
-                status = "No account with that combination of of username/password";
-            }
+            status = "No Account With That Username/Password Combination";
         }
+
     }
+    
     void SubmitLogout()
     {
         AppState.userID = 0;
