@@ -1,0 +1,22 @@
+﻿@page "/register"
+@using ServerSide_GameRater.Shared
+@inject IDataService DataService
+@inject AppState AppState
+<h3>Register</h3>
+<EditForm Model="user" OnValidSubmit="Submit">
+    <label>Username</label>
+    <InputText @bind-Value ="user.username" />
+    <label>Email</label>
+    <InputText @bind-Value="user.email" />
+    <label>Password</label>
+    <InputText @bind-Value="user.password" />
+
+</EditForm>
+@code {
+    User user = new User();
+    async Task Submit()
+    {
+        DataService.Users.Add(user);
+        AppState.userID = user.userID;
+    }
+}

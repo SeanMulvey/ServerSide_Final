@@ -1,0 +1,55 @@
+﻿@page "/games"
+@inject IDataService GameService
+@inject NavigationManager NavigationManager
+<PageTitle>Games</PageTitle>
+<h3 class="mb-5">Games</h3>
+@if(gameCount > 0)
+{
+    const int gamesPerRow = 4;
+    var gameRowList = new List<ServerSide_GameRater.Shared.Game>();
+
+    @for (int i = 0; i < gameCount; i++)
+    {
+        gameRowList = GameService.Games.Skip(i * gamesPerRow).Take(gamesPerRow).ToList();
+        <div class="row mt-3">
+            @foreach (var game in gameRowList)
+            {
+                <div class="col-md-3 mb-2">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                @game.title
+                            </h5>
+                            <h4 class="card  e-card mb-3"><i>@game.rating</i><i class="oi oi-star" style="padding-block-end: 10px"></i></h4>
+                            <p class="card  e-card mb-5">@game.genreOne | @game.genreTwo | @game.genreThree</p>
+                            <button class="btn btn-primary" @onclick="(() => ShowGame(game.gameID))"><i class="oi oi-eye"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
+   
+}
+else
+{
+    
+}
+
+
+
+@code {
+    
+    int gameCount;
+    protected override async Task OnInitializedAsync()
+    {
+        await GameService.GetGames();
+        gameCount = GameService.Games.Count();
+    }
+    void ShowGame(int id)
+    {
+        NavigationManager.NavigateTo($"game/{id}");
+    }
+}

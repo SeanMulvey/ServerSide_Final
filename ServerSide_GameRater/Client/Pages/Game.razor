@@ -1,0 +1,36 @@
+﻿@using ServerSide_GameRater.Shared
+@page "/game"
+@page "/game/{id:int}"
+@inject IDataService GameService
+
+@if(ID == null)
+{
+    <PageTitle>Add Game</PageTitle>
+    <h3>Add Game</h3>
+}
+else
+{
+    <PageTitle>@game.title</PageTitle>
+    <h1>@game.title</h1>
+    <h3>@game.publisher</h3>
+    <h3>@game.year</h3>
+    <h3>@game.rating</h3>
+    
+}
+@code {
+    [Parameter]
+    public int? ID { get; set; }
+    ServerSide_GameRater.Shared.Game game = new ServerSide_GameRater.Shared.Game { };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(ID == null)
+        {
+            //Create a new game
+        }
+        else
+        {
+            game = await GameService.GetSingleGame((int)ID);
+        }
+    }
+}

@@ -1,0 +1,37 @@
+﻿@page "/login"
+@using ServerSide_GameRater.Shared
+@inject AppState AppState
+@inject NavigationManager NavigationManager
+@inject IDataService GameService
+
+@if (AppState.userID == 0)
+{
+    <PageTitle>Login In</PageTitle>
+    <h1>Log In</h1>
+
+    <button class="btn btn-primary" @onclick="SubmitRegister">Register</button>
+    <button class="btn btn-primary" @onclick ="SubmitLogin">Login</button>
+    
+}
+else
+{
+    <h1>Signed in as, @GameService.GetSingleUser(AppState.userID).Result.username</h1>
+    <button class="btn btn-primary" @onclick="SubmitLogout">Logout</button>
+}
+
+
+
+@code {
+    void SubmitRegister()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+    void SubmitLogin()
+    {
+
+    }
+    void SubmitLogout()
+    {
+        AppState.userID = 0;
+    }
+}
