@@ -1,8 +1,8 @@
 ﻿@using ServerSide_GameRater.Shared
 @page "/game"
 @page "/game/{id:int}"
-@inject IDataService GameService
-
+@inject IDataService DataService
+@inject AppState AppState
 @if(ID == null)
 {
     <PageTitle>Add Game</PageTitle>
@@ -15,13 +15,45 @@ else
     <h3>@game.publisher</h3>
     <h3>@game.year</h3>
     <h3>@game.avgRating</h3>
-    
+    @if(AppState.userID != 0)
+    {
+        <EditForm Model="rating" OnValidSubmit="Submit">
+            <InputNumber @bind-Value="rating.rating" />
+            <button type="submit" class="btn btn-primary">Rate Game</button>
+        </EditForm>
+    }
+    else
+    {
+        <h2>Must Be Signed In To Rate Games</h2>
+    }
+
+
 }
 @code {
+    Rating rating = new Rating();
+    string status;
     [Parameter]
     public int? ID { get; set; }
     ServerSide_GameRater.Shared.Game game = new ServerSide_GameRater.Shared.Game { };
 
+    protected override async Task OnInitializedAsync()
+    {
+        await DataService.GetRatings();
+        
+    }
+    async Task Submit()
+    {
+        rating.userID = AppState.userID;
+        rating.gameID = game.gameID;
+        if(AppState.userID != 0)
+        {
+            await DataService.CreateRating(rating);
+        }
+        else
+        {
+            
+        }
+    }
     protected override async Task OnParametersSetAsync()
     {
         if(ID == null)
@@ -30,7 +62,7 @@ else
         }
         else
         {
-            game = await GameService.GetSingleGame((int)ID);
+            game = await DataService.GetSingleGame((int)ID);
         }
     }
 }

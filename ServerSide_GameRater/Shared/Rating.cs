@@ -11,6 +11,6 @@ namespace ServerSide_GameRater.Shared
         public int ratingID {  get; set; } = 0;
         public int gameID { get; set; } = 0;
         public int userID { get; set; } = 0;
-        public float rating { get; set; } = 0.0f;
+        public double rating { get; set; } = 0.0f;
     }
 }
