@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ServerSide_GameRater.Server.Data;
 using ServerSide_GameRater.Shared;
 
 namespace ServerSide_GameRater.Server.Controllers
@@ -8,37 +9,23 @@ namespace ServerSide_GameRater.Server.Controllers
     [ApiController]
     public class DataController : ControllerBase
     {
-        public static List<User> users = new List<User>
-        {
-            new User { userID = 3, username = "gamePlayer420", email = "iplaygames@gmail.com", password = "wordpass" },
-            new User { userID = 4, username = "xXNoScoperXx", email = "codkid@gamil.com", password = "cod" },
-            new User { userID = 5, username = "WOWisBis", email = "nolife@gmail.com", password = "windfury" },
-            new User { userID = 6, username = "dave", email = "dave@gmail.com", password = "davespass" }
+        private readonly DataContext _context;
 
-        };
-        public static List<Game> games = new List<Game>
+        public DataController(DataContext context)
         {
-            new Game { gameID = 5, title = "World of Warcraft", publisher = "Blizzard", year = "2004", ratingCount = 1, genreOne = "MMORPG", genreTwo = "Fantasy" },
-            new Game { gameID = 6, title = "Dave's Game", publisher = "Dave", year = "1998", ratingCount = 1, genreOne = "Puzzle", genreTwo = "Adventure", genreThree = "Platformer"}
-        };
-
-        public static List<Rating> ratings = new List<Rating>
-        {
-            new Rating { ratingID = 1, userID = 5, gameID = 5, rating = 10.0f },
-            new Rating { ratingID = 2, userID = 6, gameID = 6, rating = 7.5f },
-            new Rating { ratingID = 3, userID = 5, gameID = 6, rating = 4.0f }
-        };
-
+            _context = context;
+        }
 
         [HttpGet("users")]
         public async Task<ActionResult<List<User>>> GetUsers()
         {
+            var users = await _context.Users.ToListAsync();
             return Ok(users);
         }
         [HttpGet("users/{id}")]
         public async Task<ActionResult<User>> GetSingleUser(int id)
         {
-            var user = users.FirstOrDefault(u => u.userID == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.userID == id);
             if(user == null)
             {
                 return NotFound("User Does Not Exist");
@@ -48,12 +35,13 @@ namespace ServerSide_GameRater.Server.Controllers
         [HttpGet("games")]
         public async Task<ActionResult<List<Game>>> GetGames()
         {
+            var games = await _context.Games.ToListAsync();
             return Ok(games);
         }
         [HttpGet("games/{id}")]
         public async Task<ActionResult<Game>> GetSingleGame(int id)
         {
-            var game = games.FirstOrDefault(g => g.gameID == id);
+            var game = await _context.Games.FirstOrDefaultAsync(g => g.gameID == id);
             if (game == null)
             {
                 return NotFound("Game Does Not Exist");
@@ -63,12 +51,13 @@ namespace ServerSide_GameRater.Server.Controllers
         [HttpGet("ratings")]
         public async Task<ActionResult<List<Rating>>> GetRatings()
         {
+            var ratings = await _context.Ratings.ToListAsync();
             return Ok(ratings);
         }
         [HttpGet("ratings/{id}")]
         public async Task<ActionResult<Rating>> GetSingleRating(int id)
         {
-            var rating = ratings.FirstOrDefault(r => r.ratingID == id);
+            var rating = await _context.Ratings.FirstOrDefaultAsync(r => r.ratingID == id);
             if (rating == null)
             {
                 return NotFound("Rating Does Not Exist");
@@ -79,13 +68,48 @@ namespace ServerSide_GameRater.Server.Controllers
         [HttpGet("ratings/user/{id}")]
         public async Task<ActionResult<List<Rating>>> GetUserRatings(int id)
         {
-            var rating = ratings.Where(r => r.userID == id);
+            var rating = await _context.Ratings.Where(r => r.userID == id).ToListAsync();
             if (rating == null)
             {
                 return NotFound("User Rating Does Not Exist");
             }
             return Ok(rating);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Game>> CreateGame(Game game)
+        {
+            _context.Games.Add(game);
+            await _context.SaveChangesAsync();
+            return Ok(game);
+        }
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
+        }
+        [HttpPost]
+        public async Task<ActionResult<Rating>> CreateRating(Rating rating)
+        {
+            _context.Ratings.Add(rating);
+            await _context.SaveChangesAsync();
+            return Ok(rating);
+        }
+        private async Task<List<Game>> GetDbGames()
+        {
+            return await _context.Games.ToListAsync(); 
+        }
+        private async Task<List<User>> GetDbUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
+        private async Task<List<Rating>> GetDbRatings()
+        {
+            return await _context.Ratings.ToListAsync();
+        }
+
 
     }
 }

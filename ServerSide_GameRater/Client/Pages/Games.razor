@@ -1,6 +1,7 @@
 ﻿@page "/games"
 @inject IDataService GameService
 @inject NavigationManager NavigationManager
+@inject DataContext context
 <PageTitle>Games</PageTitle>
 <h3 class="mb-5">Games</h3>
 @if(gameCount > 0)

@@ -4,12 +4,19 @@
 @inject AppState AppState
 <h3>Register</h3>
 <EditForm Model="user" OnValidSubmit="Submit">
-    <label>Username</label>
-    <InputText @bind-Value ="user.username" />
     <label>Email</label>
     <InputText @bind-Value="user.email" />
+    
+    <br />
+    <br />
+    <label>Username</label>
+    <InputText @bind-Value="user.username" />
+    <br />
+    <br />
     <label>Password</label>
     <InputText @bind-Value="user.password" />
+    <br />
+    <br />
 
 </EditForm>
 @code {
