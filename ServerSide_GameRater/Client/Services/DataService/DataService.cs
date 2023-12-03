@@ -1,8 +1,10 @@
 ﻿
 
+using ServerSide_GameRater.Client.Pages;
 using ServerSide_GameRater.Client.Services.GameService;
 using ServerSide_GameRater.Shared;
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 
 namespace ServerSide_GameRater.Client.Services.DataService
 {
@@ -14,27 +16,54 @@ namespace ServerSide_GameRater.Client.Services.DataService
         {
             _http = http;
         }
-        public List<Game> Games { get; set; } = new List<Game>();
+        public List<ServerSide_GameRater.Shared.Game> Games { get; set; } = new List<ServerSide_GameRater.Shared.Game>();
         public List<User> Users { get; set; } = new List<User>();
         public List<Rating> Ratings { get; set; } = new List<Rating>();
 
+        public async Task CreateGame(ServerSide_GameRater.Shared.Game game)
+        {
+            var result = await _http.PostAsJsonAsync("api/Data/games", game);
+            var response = await result.Content.ReadFromJsonAsync<List<ServerSide_GameRater.Shared.Game>>();
+            Games = response;
+        }
+
+        public async Task CreateRating(Rating rating)
+        {
+            var result = await _http.PostAsJsonAsync("api/Data/ratings", rating);
+            var response = await result.Content.ReadFromJsonAsync<List<Rating>>();
+            Ratings = response;
+        }
+
+        public async Task CreateUser(User user)
+        {
+            var result = await _http.PostAsJsonAsync("api/Data/users", user);
+            var response = await result.Content.ReadFromJsonAsync<List<User>>();
+            Users = response;
+        }
+
         public async Task GetGames()
         {
-            var result = await _http.GetFromJsonAsync<List<Game>>("/api/data/games");
+            var result = await _http.GetFromJsonAsync<List<ServerSide_GameRater.Shared.Game>>("/api/data/games");
             if (result != null)
             {
                 Games = result;
             }
         }
 
-        public Task GetRatings()
+        public async Task<List<Rating>> GetRatings()
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<List<Rating>>($"/api/data/ratings");
+            if (result != null) 
+            {
+                return result;
+            }
+            throw new Exception("Rating Not Found");
+            
         }
 
-        public async Task<Game> GetSingleGame(int id)
+        public async Task<ServerSide_GameRater.Shared.Game> GetSingleGame(int id)
         {
-            var result = await _http.GetFromJsonAsync<Game>($"/api/data/games/{id}");
+            var result = await _http.GetFromJsonAsync<ServerSide_GameRater.Shared.Game>($"/api/data/games/{id}");
             if (result != null)
             {
                 return result;
@@ -62,9 +91,14 @@ namespace ServerSide_GameRater.Client.Services.DataService
             throw new NotImplementedException();
         }
 
-        public Task GetUsers()
+        public async Task GetUsers()
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<List<User>>($"/api/data/users");
+            if (result != null)
+            {
+                Users = result;
+            }
+            throw new Exception("User Not Found");
         }
     }
 }

@@ -76,27 +76,33 @@ namespace ServerSide_GameRater.Server.Controllers
             return Ok(rating);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Game>> CreateGame(Game game)
-        {
-            _context.Games.Add(game);
-            await _context.SaveChangesAsync();
-            return Ok(game);
-        }
-        [HttpPost]
+
+        [HttpPost("users")]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return Ok(user);
+
+            return Ok(await GetDbUsers());
         }
-        [HttpPost]
+        [HttpPost("games")]
+        public async Task<ActionResult<Game>> CreateGame(Game game)
+        {
+            _context.Games.Add(game);
+            await _context.SaveChangesAsync();
+
+            return Ok(await GetDbGames());
+        }
+        [HttpPost("ratings")]
         public async Task<ActionResult<Rating>> CreateRating(Rating rating)
         {
             _context.Ratings.Add(rating);
             await _context.SaveChangesAsync();
-            return Ok(rating);
+
+            return Ok(await GetDbRatings());
         }
+
+
         private async Task<List<Game>> GetDbGames()
         {
             return await _context.Games.ToListAsync(); 

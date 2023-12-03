@@ -14,14 +14,14 @@ namespace ServerSide_GameRater.Server.Migrations
                 {
                     gameID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     publisher = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     year = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ratingCount = table.Column<int>(type: "int", nullable: true),
+                    ratingCounter = table.Column<int>(type: "int", nullable: true),
                     icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     iconUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    rating = table.Column<float>(type: "real", nullable: false),
+                    avgRating = table.Column<float>(type: "real", nullable: true),
                     genreOne = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     genreTwo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     genreThree = table.Column<string>(type: "nvarchar(max)", nullable: true)

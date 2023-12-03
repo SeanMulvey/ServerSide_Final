@@ -16,14 +16,17 @@
     <label>Password</label>
     <InputText @bind-Value="user.password" />
     <br />
-    <br />
-
+    <button type ="submit" class="btn btn-primary">Register</button>
+    
 </EditForm>
+<h3>@status</h3>
 @code {
+    public string status;
     User user = new User();
     async Task Submit()
     {
-        DataService.Users.Add(user);
+        await DataService.CreateUser(user);
         AppState.userID = user.userID;
+        status = "Account Created";
     }
 }

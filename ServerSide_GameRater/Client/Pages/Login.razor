@@ -2,33 +2,65 @@
 @using ServerSide_GameRater.Shared
 @inject AppState AppState
 @inject NavigationManager NavigationManager
-@inject IDataService GameService
+@inject IDataService DataService
 
 @if (AppState.userID == 0)
 {
     <PageTitle>Login In</PageTitle>
     <h1>Log In</h1>
+    <EditForm Model="user" OnValidSubmit="SubmitLogin">
+        <label>Username</label>
+        <InputText @bind-Value="user.username" />
+        <br />
+        <br />
+        <label>Password</label>
+        <InputText @bind-Value="user.password" />
+        <br />
 
+        <button type="submit" class="btn btn-primary" @onclick ="SubmitLogin">Login</button>
+    </EditForm>
+    <br />
     <button class="btn btn-primary" @onclick="SubmitRegister">Register</button>
-    <button class="btn btn-primary" @onclick ="SubmitLogin">Login</button>
-    
+    <p>@AppState.userID</p>
+    <p>@status</p>
+   
+
 }
 else
 {
-    <h1>Signed in as, @GameService.GetSingleUser(AppState.userID).Result.username</h1>
+    <h1>Signed in as, @DataService.GetSingleUser(AppState.userID).Result.username</h1>
     <button class="btn btn-primary" @onclick="SubmitLogout">Logout</button>
 }
 
-
+    
 
 @code {
+    string status;
+    User user = new User();
     void SubmitRegister()
     {
         NavigationManager.NavigateTo("/register");
     }
     void SubmitLogin()
     {
-
+        User? check = DataService.Users.Where(u => u.username == user.username).FirstOrDefault();
+        DataService.GetUsers();
+        if (check == null)
+        {
+            status = "No account with that combination of of username/password";
+        }
+        else
+        {
+            if (check.password == user.password)
+            {
+                AppState.userID = check.userID;
+                status = "Login Successful";
+            }
+            else
+            {
+                status = "No account with that combination of of username/password";
+            }
+        }
     }
     void SubmitLogout()
     {

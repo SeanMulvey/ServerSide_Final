@@ -13,10 +13,10 @@ namespace ServerSide_GameRater.Shared
         public string description { get; set; } = string.Empty;
         public string publisher {  get; set; } = string.Empty;
         public string year { get; set; } = string.Empty;
-        public int ratingCount { get; set; } = 0;
+        public int ratingCounter { get; set; } = 0;
         public string icon {  get; set; } = string.Empty;
         public string iconUrl { get; set; } = string.Empty;
-        public float rating { get; set; } = 0.0f;
+        public double avgRating { get; set; } = 0.0;
         public string genreOne { get; set; } = string.Empty;
         public string genreTwo { get; set; } = string.Empty;
         public string genreThree { get; set;} = string.Empty;
